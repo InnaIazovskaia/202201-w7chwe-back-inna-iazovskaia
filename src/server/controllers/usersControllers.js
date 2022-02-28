@@ -27,8 +27,21 @@ const userLogin = async (req, res, next) => {
 };
 
 const userRegister = async (req, res, next) => {
+  const { name, username, password } = req.body;
   try {
-    const createdUser = await User.create(req.body);
+    const encryptedPassword = await bcrypt.hash(password, 10);
+    const usernameExists = await User.findOne({ username });
+    if (usernameExists) {
+      const error = new Error(`User ${username} already exists!`);
+      error.code = 400;
+      next(error);
+      return;
+    }
+    const createdUser = await User.create({
+      name,
+      username,
+      password: encryptedPassword,
+    });
     if (createdUser) {
       res.json(createdUser);
     } else {

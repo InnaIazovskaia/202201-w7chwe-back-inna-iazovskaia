@@ -52,18 +52,18 @@ describe("Given a /users/register/ endpoint", () => {
   });
 
   describe("When it receives POST request with existing user", () => {
-    test("Then it should respond with 500 status code and error message 'Couldn't create user'", async () => {
+    test("Then it should respond with 400 status code and error message 'Couldn't create user'", async () => {
       const newUser = {
         name: "Tomas",
         username: "superTomas",
         password: "tatata",
       };
-      const expectedErrorMessage = "Couldn't create user";
+      const expectedErrorMessage = "User superTomas already exists!";
 
       const { body } = await request(app)
         .post("/users/register")
         .send(newUser)
-        .expect(500);
+        .expect(400);
 
       expect(body.message).toBe(expectedErrorMessage);
     });
